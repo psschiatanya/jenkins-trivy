@@ -15,6 +15,9 @@
         SONAR_TOKEN = credentials('sonarqube-token') 
 		SONARQUBE_SERVER = 'sonarqube'
         scannerHome = tool 'sonarqube-scanner';
+        docker = tool 'docker'
+        DOCKER_TOKEN = credentials('dockerhub-credentials') 
+        
 		
 		
     }
@@ -22,109 +25,80 @@
 
     stages {
        
-       stage('clean workspace'){
+       stage('1-clean workspace'){
             steps{
                 cleanWs()
             }
         }
 
 
-        stage('Checkout') {
+        stage('2-Checkout-github') {
             steps {
                 // Checkout code from the repository
                 git url: 'https://github.com/jaiswaladi246/Boardgame.git', branch: 'main'
             }
         }
-
- /*     stage('Compile') {
-            steps {
-                // Clean and compile the project
-                sh 'mvn clean compile'
-            }
-        } */
-
- /*     
-		
-    	stage('Code Analysis') {
-            steps {
-                script {
-                    // Run SonarQube scan
-                    
-                        sh '''mvn clean verify sonar:sonar  -Dsonar.java.binaries=. -Dsonar.projectKey=test  -Dsonar.projectName='test' -Dsonar.host.url=http://3.107.55.196:9000   -Dsonar.login=${SONAR_TOKEN}'''
-                    
-                }
-            }
-        }  */
         
- 
-		
-/*		stage('Code Analysis-2') {
+        stage('3-MVN-Compile') {
             steps {
-                script {
-                    // Run SonarQube scan
-                    withSonarQubeEnv(SONARQUBE_SERVER) {
-                        sh '''${MAVEN_HOME}/bin/mvn sonar:sonar  -Dsonar.java.binaries=. -Dsonar.projectKey=test  -Dsonar.projectName='test' -Dsonar.host.url=http://3.107.55.196:9000   -Dsonar.login=${SONAR_TOKEN}'''
-                    }
-                }
+                sh "mvn compile"
             }
-        } 
-*/		
-		
-	
-		stage('Trivy FileSystem Scan') {
+        }
+        
+        stage('4-MVN-Test') {
+            steps {
+                sh "mvn test"
+            }
+        }
+        
+        stage('5-OWASP FS SCAN') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        
+        stage('6-TRIVY-File System Scan') {
             steps {
                 sh "trivy fs --format table -o trivy-fs-report.html ."
             }
         }
-    
-		
-	    stage('Run Sonarqube') {
-            environment {
-                scannerHome = tool 'sonarqube-scanner';
-            }
+        
+        stage('7-SonarQube Analsyis') {
             steps {
-              withSonarQubeEnv(credentialsId: 'sonarqube-token', installationName: 'sonarqube') {
+               withSonarQubeEnv(credentialsId: 'sonarqube-token', installationName: 'sonarqube') {
                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=test -Dsonar.projectName='test' -Dsonar.java.binaries=. "
-              }
-            }
-        }  
-		
-		
-	 	  stage('Quality Gate') {
-            steps {
-                // Wait for SonarQube quality gate result
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
                 }
             }
-        } 
+        }
+        
+        stage('8-MVN-Build') {
+            steps {
+                sh "mvn package"
+            }
+        }
+        
+        stage("Docker Build & Push"){
+           steps{
+                script{
+                   withDockerRegistry(credentialsId: 'dockerhub-credentials', toolName: 'docker'){
+                       
+                       sh "docker build -t psschiatanya/boardshack:latest ."
+                       //sh "docker build -t amazon ."
+                       //sh "docker tag amazon bhubon33/amazon:latest "
+                       //sh "docker push bhubon33/amazon:latest "
+                    }
+                }
+            }
+        }
+        
+        
+        
+        
+        
        
-
-    /*  stage (" Build_Jar_file")
-                {
-                steps {
-                        echo "Step2: Maven Build"
-                        sh 'mvn -B -DskipTests clean install'
-                
-                      }
-                }
-*/		
-		stage('Install Dependencies') {
-            steps {
-                sh "npm install"
-            }
-        }
-
-        stage('OWASP FS SCAN') {
-            steps {
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
-        }
-	  
-		
-    }	
-	}
- 
-		
-		
+        
+        
+    }
+}    
+    

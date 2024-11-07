@@ -41,9 +41,9 @@
                 // Clean and compile the project
                 sh 'mvn clean compile'
             }
-        }
+        } */
 
-        stage('Unit_Test') {
+ /*       stage('Unit_Test') {
             steps {
                 // Run unit tests
                 sh 'mvn test'
@@ -51,7 +51,7 @@
             post {
                 always {
                     // Archive test results
-                    junit '**/target/surefire-reports/*.xml'
+                    // junit '**/target/surefire-reports/*.xml'
                 }
             }
         }

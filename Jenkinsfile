@@ -63,7 +63,7 @@
                 script {
                     // Run SonarQube scan
                     withSonarQubeEnv(SONARQUBE_SERVER) {
-                        sh "${MAVEN_HOME}/bin/mvn sonar:sonar  -Dsonar.java.binaries=. -Dsonar.projectKey=test  -Dsonar.projectName='test' -Dsonar.host.url=http://3.107.55.196:9000   -Dsonar.login=${SONAR_TOKEN}"
+                        sh '''${MAVEN_HOME}/bin/mvn sonar:sonar  -Dsonar.java.binaries=. -Dsonar.projectKey=test  -Dsonar.projectName='test' -Dsonar.host.url=http://3.107.55.196:9000   -Dsonar.login=${SONAR_TOKEN}'''
                     }
                 }
             }

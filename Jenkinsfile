@@ -32,7 +32,7 @@
         stage('Checkout') {
             steps {
                 // Checkout code from the repository
-                git url: 'https://github.com/psschiatanya/jenkins-trivy', branch: 'main'
+                git url: 'https://github.com/jaiswaladi246/Boardgame.git', branch: 'main'
             }
         }
 

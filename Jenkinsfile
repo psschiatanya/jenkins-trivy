@@ -58,7 +58,7 @@
         
  
 		
-		stage('Code Analysis-2') {
+/*		stage('Code Analysis-2') {
             steps {
                 script {
                     // Run SonarQube scan
@@ -68,12 +68,12 @@
                 }
             }
         } 
-		
+*/		
 		
 	
 		
 		
-/*	    stage('Run Sonarqube') {
+	    stage('Run Sonarqube') {
             environment {
                 scannerHome = tool 'sonarqube-scanner';
             }
@@ -83,7 +83,7 @@
               }
             }
         }  
-*/		
+		
 		
 		  stage('Quality Gate') {
             steps {

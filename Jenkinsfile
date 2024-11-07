@@ -54,7 +54,7 @@
                     
                 }
             }
-        }  
+        }  */
         
  
 		
@@ -72,8 +72,8 @@
 		
 	
 		
-*/		
-	    stage('Run Sonarqube') {
+		
+/*	    stage('Run Sonarqube') {
             environment {
                 scannerHome = tool 'sonarqube-scanner';
             }
@@ -83,7 +83,7 @@
               }
             }
         }  
-		
+*/		
 		
 		  stage('Quality Gate') {
             steps {

@@ -56,7 +56,7 @@
             }
         }  
         
- */
+ 
 		
 		stage('Code Analysis-2') {
             steps {
@@ -72,8 +72,8 @@
 		
 	
 		
-		
-/*		 stage('Run Sonarqube') {
+*/		
+	    stage('Run Sonarqube') {
             environment {
                 scannerHome = tool 'sonarqube-scanner';
             }
@@ -82,7 +82,7 @@
                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=test -Dsonar.projectName='test' -Dsonar.java.binaries=. "
               }
             }
-        }  */  
+        }  
 		
 		
 		  stage('Quality Gate') {

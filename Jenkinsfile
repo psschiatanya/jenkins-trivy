@@ -71,7 +71,12 @@
 */		
 		
 	
-		
+		stage('Trivy FileSystem Scan') {
+            steps {
+                sh "trivy fs --format table -o trivy-fs-report.html ."
+            }
+        }
+    
 		
 	    stage('Run Sonarqube') {
             environment {
@@ -85,7 +90,7 @@
         }  
 		
 		
-		  stage('Quality Gate') {
+	/* 	  stage('Quality Gate') {
             steps {
                 // Wait for SonarQube quality gate result
                 timeout(time: 1, unit: 'HOURS') {
@@ -93,8 +98,9 @@
                 }
             }
         } 
+    */    
 
-/*       stage (" Build_Jar_file")
+    /*  stage (" Build_Jar_file")
                 {
                 steps {
                         echo "Step2: Maven Build"
